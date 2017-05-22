@@ -1,0 +1,6 @@
+*.tf
+*.tfstate
+*.tfstate.*
+terraform-provider-*
+crash.log
+test
