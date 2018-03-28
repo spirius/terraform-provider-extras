@@ -6,10 +6,11 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 
-	tfaws "github.com/hashicorp/terraform/builtin/providers/aws"
+	tfaws "github.com/terraform-providers/terraform-provider-aws/aws"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/service/directconnect"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/route53"
 	"github.com/aws/aws-sdk-go/service/sts"
@@ -31,14 +32,15 @@ var PREFIX string = "extras_"
 type AWSClient struct {
 	tfaws.AWSClient
 
-	region     string
-	partition  string
-	accountid  string
+	region      string
+	partition   string
+	accountid   string
 	subProvider string
 
 	r53conn *route53.Route53
 	iamconn *iam.IAM
 	stsconn *sts.STS
+	dxconn  *directconnect.DirectConnect
 }
 
 var providers map[string]*AWSClient = map[string]*AWSClient{}
@@ -65,8 +67,10 @@ func Provider() terraform.ResourceProvider {
 		Schema:        s,
 		ConfigureFunc: providerConfigure,
 		ResourcesMap: map[string]*schema.Resource{
-			PREFIX + "aws_route53_zone_association_authorization": resourceAwsRoute53ZoneAssociationAuthorization(),
-			PREFIX + "aws_route53_zone_association":               resourceAwsRoute53ZoneAssociation(awsprovider),
+			PREFIX + "aws_route53_zone_association_authorization":    resourceAwsRoute53ZoneAssociationAuthorization(),
+			PREFIX + "aws_route53_zone_association":                  resourceAwsRoute53ZoneAssociation(awsprovider),
+			PREFIX + "aws_dx_private_virtual_interface":              resourceAwsDxPrivateVirtualInterface(),
+			PREFIX + "aws_dx_private_virtual_interface_confirmation": resourceAwsDxPrivateVirtualInterfaceConfirmation(),
 		},
 	}
 }
@@ -243,6 +247,8 @@ func getClient(c *tfaws.Config, subProvider string, client *AWSClient) (interfac
 	if subProvider != "" {
 		providers[subProvider] = client
 	}
+
+	client.dxconn = directconnect.New(sess)
 
 	return client, nil
 }
