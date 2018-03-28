@@ -1,6 +1,6 @@
 *.tf
 *.tfstate
 *.tfstate.*
-terraform-provider-*
+/terraform-provider-*
 crash.log
 test
