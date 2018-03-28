@@ -67,10 +67,10 @@ func Provider() terraform.ResourceProvider {
 		Schema:        s,
 		ConfigureFunc: providerConfigure,
 		ResourcesMap: map[string]*schema.Resource{
-			PREFIX + "aws_route53_zone_association_authorization":    resourceAwsRoute53ZoneAssociationAuthorization(),
-			PREFIX + "aws_route53_zone_association":                  resourceAwsRoute53ZoneAssociation(awsprovider),
-			PREFIX + "aws_dx_private_virtual_interface":              resourceAwsDxPrivateVirtualInterface(),
-			PREFIX + "aws_dx_private_virtual_interface_confirmation": resourceAwsDxPrivateVirtualInterfaceConfirmation(),
+			PREFIX + "aws_route53_zone_association_authorization": resourceAwsRoute53ZoneAssociationAuthorization(),
+			PREFIX + "aws_route53_zone_association":               resourceAwsRoute53ZoneAssociation(awsprovider),
+			PREFIX + "aws_dx_private_vif":                         resourceAwsDxPrivateVirtualInterface(),
+			PREFIX + "aws_dx_private_vif_confirmation":            resourceAwsDxPrivateVirtualInterfaceConfirmation(),
 		},
 	}
 }
